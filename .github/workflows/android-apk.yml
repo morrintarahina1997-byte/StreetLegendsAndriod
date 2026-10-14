@@ -1,0 +1,43 @@
+
+name: Build Street Legends APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'StreetLegendsAndroid_PhoneBuild.zip'
+      - '.github/workflows/android-apk.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Extract game project
+        run: |
+          unzip -o StreetLegendsAndroid_PhoneBuild.zip
+          ls -la StreetLegendsAndroid
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Build Android APK
+        run: gradle -p StreetLegendsAndroid assembleDebug
+
+      - name: Save APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreetLegends-debug-APK
+          path: StreetLegendsAndroid/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
