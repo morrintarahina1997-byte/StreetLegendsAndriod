@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'StreetLegendsAndroid_PhoneBuild.zip'
+      - 'StreetLegendsAndroid_VehicleUpgrade.zip'
       - '.github/workflows/android-apk.yml'
 
 jobs:
@@ -16,9 +16,9 @@ jobs:
       - name: Get repository files
         uses: actions/checkout@v4
 
-      - name: Extract game project
+      - name: Extract upgraded project
         run: |
-          unzip -o StreetLegendsAndroid_PhoneBuild.zip
+          unzip -o StreetLegendsAndroid_VehicleUpgrade.zip
           ls -la StreetLegendsAndroid
 
       - name: Set up Java
@@ -38,6 +38,6 @@ jobs:
       - name: Save APK
         uses: actions/upload-artifact@v4
         with:
-          name: StreetLegends-debug-APK
+          name: StreetLegends-Vehicle-Upgrade-APK
           path: StreetLegendsAndroid/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
