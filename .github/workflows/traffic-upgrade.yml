@@ -1,0 +1,47 @@
+
+name: Build Street Legends Traffic Upgrade
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'StreetLegendsAndroid_TrafficUpgrade.zip'
+      - '.github/workflows/traffic-upgrade.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract traffic upgrade
+        run: |
+          unzip -q StreetLegendsAndroid_TrafficUpgrade.zip -d traffic-source
+          test -f traffic-source/StreetLegendsAndroid/app/build.gradle
+
+      - name: Build Android APK
+        run: gradle -p traffic-source/StreetLegendsAndroid assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreetLegends-Traffic-Upgrade-APK
+          path: traffic-source/StreetLegendsAndroid/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
